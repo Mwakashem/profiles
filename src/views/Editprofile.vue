@@ -1,3 +1,4 @@
+<!-- This example requires Tailwind CSS v2.0+ -->
 <template>
 <div class="container m-10">
   <div class="mt-10 sm:mt-0">
@@ -10,7 +11,7 @@
           </p>
         </div>
       </div>
-      <div class="mt-5 md:mt-0 md:col-span-2">
+      <div class="mt-5 md:mt-0 md:col-span-2" v-if="updateprofile">
         <form @submit="onSubmit">
           <div class="shadow overflow-hidden sm:rounded-md">
             <div class="px-4 py-5 bg-white sm:p-6">
@@ -21,7 +22,6 @@
                     <input id="name" v-model="updateprofile.name" class="w-full h-10 px-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline" type="text" placeholder=""/>
                     </div>
                 </div>
-
                 <div class="col-span-6 sm:col-span-3">
                     <label class="block mb-1" for="forms-labelOverInputCode">Occupation</label>
                     <input id="occupation" v-model="updateprofile.occupation" class="w-full h-10 px-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline" type="text" placeholder=""/>
@@ -52,36 +52,29 @@
 </template>
 
 <script>
- import { mapActions} from 'vuex';
+import { mapGetters, mapActions} from 'vuex';
 export default {
-    name: "Editprofile",
-    props:['profile'],
-    data () {
-        return {
-            updateprofile:{
-                id: this.$route.params.id,
-                name: this.profile.name,
-                occupation: this.profile.occupation,
-                email: this.profile.email,
-                bio: this.profile.bio
-            }
-        }
-    },
-    
-    methods: {
-        ...mapActions(["updateProfile"]),
-        onSubmit(e){
+  name: "Editprofile",
+    computed: {
+    ...mapGetters([
+      'updateprofile'
+    ]),
+    ...mapActions(["updateProfile"]),
+  },
+  created() {
+    this.id = this.$route.params.id;
+    console.log(this.id)
+    this.$store.dispatch('getupdateProfile', this.id);
+  },
+   methods: {
+  onSubmit(e){
         e.preventDefault();
         this.id = this.$route.params.id;
         console.log(this.updateprofile.name)
-        this.$store.dispatch('updateProfile', this.updateprofile);
-        // this.updateProfile(this.id,this.name,this.occupation,this.email,this.bio);
-    },        
-    }
-
-}
+        this.$store.dispatch('updateProfile', this.updateprofile).then(path => {
+         this.$router.push(`/${this.updateprofile.id}`)
+      })
+    }, 
+   }
+};
 </script>
-
-<style>
-
-</style>

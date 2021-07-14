@@ -5,6 +5,7 @@ export default createStore({
   state: {
     profiles: [],
     profile: null,
+    updateprofile: null,
   },
   mutations: {
     GETPROFILES (state, payload) {
@@ -12,6 +13,9 @@ export default createStore({
     },
     GETPROFILE (state, payload, id) {  
       state.profile = payload;
+    },
+    GETUPDATEPROFILE (state, payload, id) {  
+      state.updateprofile = payload;
     },
     UPDATEPROFILE (state, updateprofile) { 
             // profile.splice(profile);
@@ -21,6 +25,7 @@ export default createStore({
  getters: {
     profiles: state => state.profiles,
     profile: state => state.profile,
+    updateprofile: state => state.updateprofile,
   },
   actions: {
     getProfiles ({ commit }) {
@@ -36,11 +41,17 @@ export default createStore({
         console.log(response.data)
       });
     },
+    getupdateProfile ({ commit }, id) {
+      console.log(id)
+      axios.get(`https://ti-react-test.herokuapp.com/users/${id}`).then((response) => {
+        commit('GETUPDATEPROFILE', response.data)
+        console.log(response.data)
+      });
+    },
     updateProfile({commit}, updateprofile){
       console.log(updateprofile)
-      axios.put(`https://ti-react-test.herokuapp.com/users/${updateprofile.id}`, updateprofile);
-      // console.log(name)
-        commit('UPDATEPROFILE', updateprofile, getProfile(updateprofile.id))
+      axios.put(`https://ti-react-test.herokuapp.com/users/${updateprofile.id}`, updateprofile);      // console.log(name
+        commit('GETPROFILES', updateprofile)
         
     }
   },
